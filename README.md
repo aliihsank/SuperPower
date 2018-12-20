@@ -1,2 +1,2 @@
-# SuperPower
-A mobile app that learns fuel tank's volume according to height measurements
+# SuperPower - Real Time Mobile Strategy Game
+SuperPower is a real-time mobile stragety game
