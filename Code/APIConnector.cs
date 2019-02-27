@@ -75,6 +75,8 @@ public class APIConnector {
         WWW www = new WWW(baseUri + requestedUri, postData, headers);
 
         yield return www;
+
+        Debug.Log("Request: " + bodyJsonString + " : Uri: " + requestedUri +  " : Response: " + www.text);
         callBack(www.text);
     }
 

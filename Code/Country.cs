@@ -22,9 +22,9 @@ public class Country  {
         this.numOfProvinces = numOfProvinces;
         this.remaining = remaining;
 
-        float randR = Random.Range(0.1f, 1);
-        float randG = Random.Range(0.1f, 1);
-        float randB = Random.Range(0.1f, 1);
+        float randR = Random.Range(0.1f, .5f);
+        float randG = Random.Range(0.1f, .5f);
+        float randB = Random.Range(0.1f, .5f);
 
         countryColor = new Color(randR, randG, randB, 1);
     }
