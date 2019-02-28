@@ -15,16 +15,40 @@ public class Login : MonoBehaviour {
 
     public string jsonToSend;
 
+    public bool sessionChecked = false;
+    public bool hasInternet = false;
 
 
     void Start () {
-        CheckSession();
-        
+        //Make Connectivity Check
+        APIConnector apiConnector = new APIConnector(this);
+        string jsonToSend = @"{'email':'" + "null" + "', 'password':'" + "null" + "'}";
+        apiConnector.makeRequest(CheckConnectivity, "/test", jsonToSend);
+
     }
 	
 	void Update () {
-        
 
+        //If device has internet connection then check for existing session
+        if (hasInternet && !sessionChecked)
+        {
+            CheckSession();
+            sessionChecked = true;
+        }
+
+    }
+
+    public void CheckConnectivity(string request, JSONNode result)
+    {
+        if (result["Test Message(POST)"] == "Welcome to new API !!")
+        {
+            hasInternet = true;
+        }
+        else
+        {
+            Application.Quit();
+
+        }
     }
 
     /*
@@ -35,12 +59,14 @@ public class Login : MonoBehaviour {
      */
     public void BtnLoginPressed()
     {
-        jsonToSend = @"{'email':'" + email.text + "', 'password':'" + password.text + "'}";
+        if (hasInternet)
+        {
+            jsonToSend = @"{'email':'" + email.text + "', 'password':'" + password.text + "'}";
 
-        APIConnector superpowerConnector = new APIConnector(this);
-        
-        superpowerConnector.makeRequest(CheckLogin, "userLogin", jsonToSend);
-        
+            APIConnector superpowerConnector = new APIConnector(this);
+
+            superpowerConnector.makeRequest(CheckLogin, "userLogin", jsonToSend);
+        }
     }
 
     /*
