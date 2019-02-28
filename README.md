@@ -32,4 +32,8 @@
 - Make the datetime ui work
 - Put limitations about moving map
 - Add user registration page
+- Check internet connection in login before session check
+- Add splash screen
+- Manage user settings from PlayerPrefs
+- Add icon-images to main scene UIs
 - Add other details later...
