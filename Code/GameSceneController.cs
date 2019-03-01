@@ -6,6 +6,7 @@ using SimpleJSON;
 using System.IO;
 using System;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameSceneController : MonoBehaviour
 {
@@ -18,15 +19,25 @@ public class GameSceneController : MonoBehaviour
 
     public Camera mainCamera;
 
+    List<GameObject> provinceObjects = null;
+
+    int activeMap = 0; //Country Map(default), 1=Provinces Map
+
+
+    //From Unity Inspector
     public GameObject countryLabelsGroup;
     public GameObject provinceLabelsGroup;
 
     public RectTransform provinceLabelsGroupTransform;
     public RectTransform countryLabelsGroupTransform;
 
-    List<GameObject> provinceObjects = null;
+    public GameObject settingsPanel;
+    public GameObject militaryPanel;
+    public GameObject diplomacyPanel;
+    public GameObject lawsPanel;
+    public GameObject budgetPanel;
 
-    int activeMap = 0; //Country Map(default), 1=Provinces Map
+    private GameObject activeUserOptionPanel;
 
     
     #region Camera Movements and Zoom-in,out Variables
@@ -36,10 +47,6 @@ public class GameSceneController : MonoBehaviour
     private Vector3 basePos = Vector3.zero; //Where should the camera be initially?
     private Vector3 provinceLabelsGroupTransformPos = Vector3.zero;
     private Vector3 countryLabelsGroupTransformPos = Vector3.zero;
-
-    //Zoom-in out
-    public float perspectiveZoomSpeed = 0.5f;        // The rate of change of the field of view in perspective mode.
-    public float orthoZoomSpeed = 0.5f;        // The rate of change of the orthographic size in orthographic mode.
     #endregion
 
 
@@ -54,10 +61,16 @@ public class GameSceneController : MonoBehaviour
     //Update Status Tracker
     string updateStatus = "finished";
 
+    //UI Checks
+    bool menuIsOpen = false;
+
 
     void Start()
     {
         Screen.orientation = ScreenOrientation.Landscape;
+
+        //Load Saved Settings (only sound volume for now)
+        AudioListener.volume = PlayerPrefs.GetFloat("soundVolume", 1);
 
         #region Set Non-Dependent Variables
         screenWidth = Screen.width;
@@ -88,37 +101,100 @@ public class GameSceneController : MonoBehaviour
             otherCountriesRdy = false;
             provincesRequestCounter = 0;
         }
-        
+
         #region Camera and Labels Movement
-        
+
         //Camera Movements(Move camera and labels(country, province))
-        if (Input.GetMouseButton(0))
+        if (!menuIsOpen)
         {
-            if (clickOrigin == Vector3.zero)
+            if (Input.GetMouseButton(0))
             {
-                clickOrigin = Input.mousePosition;
-                basePos = mainCamera.transform.position;
-                provinceLabelsGroupTransformPos = provinceLabelsGroupTransform.position;
-                countryLabelsGroupTransformPos = countryLabelsGroupTransform.position;
+                if (clickOrigin == Vector3.zero)
+                {
+                    clickOrigin = Input.mousePosition;
+                    basePos = mainCamera.transform.position;
+                    provinceLabelsGroupTransformPos = provinceLabelsGroupTransform.position;
+                    countryLabelsGroupTransformPos = countryLabelsGroupTransform.position;
+                }
+                dragOrigin = Input.mousePosition;
             }
-            dragOrigin = Input.mousePosition;
+
+            if (!Input.GetMouseButton(0))
+            {
+                clickOrigin = Vector3.zero;
+                return;
+            }
+
+            Vector3 newPositionVector = new Vector3(basePos.x + ((clickOrigin.x - dragOrigin.x) * (3.57f / Screen.width)), basePos.y + ((clickOrigin.y - dragOrigin.y) * (3.57f / Screen.width)), -10);
+            Vector2 newProvinceLabelGroupPositionVector = new Vector2(provinceLabelsGroupTransformPos.x - (clickOrigin.x - dragOrigin.x), provinceLabelsGroupTransformPos.y - (clickOrigin.y - dragOrigin.y));
+            Vector2 newcountryLabelGroupPositionVector = new Vector2(countryLabelsGroupTransformPos.x - (clickOrigin.x - dragOrigin.x), countryLabelsGroupTransformPos.y - (clickOrigin.y - dragOrigin.y));
+
+            mainCamera.transform.position = newPositionVector;
+            provinceLabelsGroupTransform.position = newProvinceLabelGroupPositionVector;
+            countryLabelsGroupTransform.position = newcountryLabelGroupPositionVector;
         }
-
-        if (!Input.GetMouseButton(0))
-        {
-            clickOrigin = Vector3.zero;
-            return;
-        }
-
-        Vector3 newPositionVector = new Vector3(basePos.x + ((clickOrigin.x - dragOrigin.x) * (3.57f / Screen.width)), basePos.y + ((clickOrigin.y - dragOrigin.y) * (3.57f / Screen.width)), -10);
-        Vector2 newProvinceLabelGroupPositionVector = new Vector2(provinceLabelsGroupTransformPos.x - (clickOrigin.x - dragOrigin.x), provinceLabelsGroupTransformPos.y - (clickOrigin.y - dragOrigin.y));
-        Vector2 newcountryLabelGroupPositionVector = new Vector2(countryLabelsGroupTransformPos.x - (clickOrigin.x - dragOrigin.x), countryLabelsGroupTransformPos.y - (clickOrigin.y - dragOrigin.y));
-
-        mainCamera.transform.position = newPositionVector;
-        provinceLabelsGroupTransform.position = newProvinceLabelGroupPositionVector;
-        countryLabelsGroupTransform.position = newcountryLabelGroupPositionVector;
         #endregion
         
+    }
+
+    public void ChangeSoundVolume(float soundVolume)
+    {
+        AudioListener.volume = soundVolume;
+        PlayerPrefs.SetFloat("soundVolume", soundVolume);
+    }
+
+    public void LogOut()
+    {
+        PlayerPrefs.DeleteAll();
+        SceneManager.LoadSceneAsync("LoginScene");
+    }
+
+    public void UserOptionClicked(string btnType)
+    {
+        menuIsOpen = true;
+
+        switch (btnType)
+        {
+            case "Settings":
+                activeUserOptionPanel = settingsPanel;
+                break;
+            case "Military":
+                activeUserOptionPanel = militaryPanel;
+                break;
+            case "Diplomacy":
+                activeUserOptionPanel = diplomacyPanel;
+                break;
+            case "Law":
+                activeUserOptionPanel = lawsPanel;
+                break;
+            case "Budget":
+                activeUserOptionPanel = budgetPanel;
+                break;
+        }
+
+        if(activeMap == 0)
+        {
+            countryLabelsGroup.GetComponent<CanvasGroup>().alpha = 0;
+        }
+        else
+        {
+            provinceLabelsGroup.GetComponent<CanvasGroup>().alpha = 0;
+        }
+        activeUserOptionPanel.SetActive(true);
+    }
+
+    public void CloseUserOptionPanel()
+    {
+        activeUserOptionPanel.SetActive(false);
+        if(activeMap == 0)
+        {
+            countryLabelsGroup.GetComponent<CanvasGroup>().alpha = 1;
+        }
+        else
+        {
+            provinceLabelsGroup.GetComponent<CanvasGroup>().alpha = 1;
+        }
+        menuIsOpen = false;
     }
 
     public IEnumerator StartUpdateInfos()

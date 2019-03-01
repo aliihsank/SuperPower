@@ -13,9 +13,8 @@ using UnityEngine;
 
 public class APIConnector {
 
-    private MonoBehaviour context;
-
-    //Base Uri as default:
+    private MonoBehaviour context = null;
+    
     private string baseUri = "http://superpowerapi-env.cyhwffmpct.eu-central-1.elasticbeanstalk.com/";
     
     public APIConnector()
@@ -27,9 +26,7 @@ public class APIConnector {
     {
         this.context = context;
     }
-
-
-    //GENERIC MAKE REQUEST METHOD FOR GENERATING ANY REQUEST IN DIFFERENT THREAD
+    
     public void makeRequest(System.Action<string, JSONNode> responseHandler, string requestedUri, string jsonBody)
     {
         if(context == null)
@@ -45,23 +42,13 @@ public class APIConnector {
             }
         }, requestedUri, jsonBody));
     }
-
-    //GENERIC MAKE REQUEST METHOD FOR GENERATING ANY REQUEST IN DIFFERENT THREAD
+    
     public void makeRequest(MonoBehaviour context, System.Action<string, JSONNode> responseHandler, string requestedUri, string jsonBody)
     {
         this.context = context;
-        context.StartCoroutine(PostRequest(callBack =>
-        {
-            if (callBack != null)
-            {
-                JSONNode result = JSON.Parse(callBack);
-                responseHandler(jsonBody, result);
-            }
-        }, requestedUri, jsonBody));
+        this.makeRequest(responseHandler, requestedUri, jsonBody);
     }
-
-
-    //GENERIC POST METHOD FOR SENDING JSON DATA
+    
     private IEnumerator PostRequest(System.Action<string> callBack, string requestedUri, string bodyJsonString)
     {
         Dictionary<string, string> headers = new Dictionary<string, string>();
