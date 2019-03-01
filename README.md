@@ -27,14 +27,17 @@
 + Automated info-ui update per minute
 + Check internet connection in login before session check
 
+01.03.2019
++ Give function to main ui buttons
++ Manage user settings from PlayerPrefs
+
+
 ## WHAT'S NEXT TO ADD ##
 
 - Add user properties to ui
-- Give function to main ui buttons (Design draft pages for now)
 - Make the datetime ui work
 - Put limitations about moving map
 - Add user registration page
 - Add splash screen
-- Manage user settings from PlayerPrefs
 - Add icon-images to main scene UIs
 - Add other details later...
