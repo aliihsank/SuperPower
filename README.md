@@ -31,10 +31,11 @@
 + Give function to main ui buttons
 + Manage user settings from PlayerPrefs
 
+02.03.2019
++ Add user properties to ui
 
 ## WHAT'S NEXT TO ADD ##
 
-- Add user properties to ui
 - Make the datetime ui work
 - Put limitations about moving map
 - Add user registration page
