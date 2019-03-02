@@ -25,6 +25,9 @@ public class GameSceneController : MonoBehaviour
 
 
     //From Unity Inspector
+    public Text myCountyName;
+    public Text myMoneyAmount;
+
     public GameObject countryLabelsGroup;
     public GameObject provinceLabelsGroup;
 
@@ -291,6 +294,11 @@ public class GameSceneController : MonoBehaviour
         //Load Country Labels
         foreach (var countryX in provinces.GroupBy(x => x.countryID))
         {
+            //Assign my country info to UI
+            myCountyName.GetComponent<Text>().text = countries[countryX.Key].name;
+            myMoneyAmount.GetComponent<Text>().text = countries[countryX.Key].remaining.ToString();
+
+            //Find centroid of provinces and assign country name to that position
             Vector2 countryCentroid = Vector2.zero;
 
             //Find centroid of provinces
@@ -353,7 +361,7 @@ public class GameSceneController : MonoBehaviour
             if (details.IsObject)
             {
                 //Debug.Log("AddMyCountry: " + details.ToString());
-                countries.Add(details["id"], new Country(details["id"], details["cname"], details["totalpopulation"], details["avgTax"], details["numOfProvinces"], details["remaining"]));
+                countries.Add(details["id"], new Country(details["id"], details["cname"], details["totalpopulation"], details["avgTax"], details["numOfProvinces"], details["remaining"], true));
                 myCountryRdy = true;
             }
             //List of Countries
@@ -362,7 +370,7 @@ public class GameSceneController : MonoBehaviour
                 foreach (JSONNode country in details)
                 {
                     //Debug.Log("AddOtherCountries: " + country.ToString());
-                    countries.Add(country["id"], new Country(country["id"], country["cname"], country["totalpopulation"], country["avgTax"], country["numOfProvinces"], country["remaining"]));
+                    countries.Add(country["id"], new Country(country["id"], country["cname"], country["totalpopulation"], country["avgTax"], country["numOfProvinces"], country["remaining"], false));
                 }
                 otherCountriesRdy = true;
             }

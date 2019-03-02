@@ -13,7 +13,9 @@ public class Country  {
 
     public Color countryColor;
 
-    public Country(int id, string name, int totalPopulation, int avgTax, int numOfProvinces, int remaining)
+    public bool isMyCountry;
+
+    public Country(int id, string name, int totalPopulation, int avgTax, int numOfProvinces, int remaining, bool isMyCountry)
     {
         this.id = id;
         this.name = name;
@@ -25,6 +27,8 @@ public class Country  {
         float randR = Random.Range(0.1f, .5f);
         float randG = Random.Range(0.1f, .5f);
         float randB = Random.Range(0.1f, .5f);
+
+        this.isMyCountry = isMyCountry;
 
         countryColor = new Color(randR, randG, randB, 1);
     }
