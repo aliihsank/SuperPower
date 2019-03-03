@@ -34,11 +34,14 @@
 02.03.2019
 + Add user properties to ui
 
+03.03.2019
++ Make the datetime ui work
++ Put limitations about moving map
++ Add user registration page
+
+
 ## WHAT'S NEXT TO ADD ##
 
-- Make the datetime ui work
-- Put limitations about moving map
-- Add user registration page
 - Add splash screen
 - Add icon-images to main scene UIs
 - Add other details later...
