@@ -42,6 +42,12 @@
 
 ## WHAT'S NEXT TO ADD ##
 
+- Change Orientation when logout
 - Add splash screen
 - Add icon-images to main scene UIs
+- Complete Military Menu
+- Complete Diplomacy Menu
+- Complete Law Menu
+- Complete Budget Menu
+
 - Add other details later...
