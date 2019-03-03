@@ -13,17 +13,18 @@ public class Login : MonoBehaviour {
 
     public Button btnLogin;
 
-    public string jsonToSend;
+    private string jsonToSend;
 
     public bool sessionChecked = false;
     public bool hasInternet = false;
 
+    private APIConnector apiConnector;
 
     void Start () {
         //Make Connectivity Check
-        APIConnector apiConnector = new APIConnector(this);
+        apiConnector = new APIConnector(this);
         string jsonToSend = @"{'email':'" + "null" + "', 'password':'" + "null" + "'}";
-        apiConnector.makeRequest(CheckConnectivity, "/test", jsonToSend);
+        apiConnector.makeRequest(CheckConnectivity, "test", jsonToSend);
 
     }
 	
@@ -36,6 +37,11 @@ public class Login : MonoBehaviour {
             sessionChecked = true;
         }
 
+    }
+
+    public void Pass2RegisterPage()
+    {
+        SceneManager.LoadSceneAsync("Register");
     }
 
     public void CheckConnectivity(string request, JSONNode result)
@@ -62,10 +68,8 @@ public class Login : MonoBehaviour {
         if (hasInternet)
         {
             jsonToSend = @"{'email':'" + email.text + "', 'password':'" + password.text + "'}";
-
-            APIConnector superpowerConnector = new APIConnector(this);
-
-            superpowerConnector.makeRequest(CheckLogin, "userLogin", jsonToSend);
+            
+            apiConnector.makeRequest(CheckLogin, "userLogin", jsonToSend);
         }
     }
 

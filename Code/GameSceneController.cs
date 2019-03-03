@@ -25,7 +25,9 @@ public class GameSceneController : MonoBehaviour
 
 
     //From Unity Inspector
-    public Text myCountyName;
+    public Text dateTimeTextObj;
+
+    public Text myCountryName;
     public Text myMoneyAmount;
 
     public GameObject countryLabelsGroup;
@@ -41,7 +43,7 @@ public class GameSceneController : MonoBehaviour
     public GameObject budgetPanel;
 
     private GameObject activeUserOptionPanel;
-
+    
     
     #region Camera Movements and Zoom-in,out Variables
     //Drag Camera
@@ -71,6 +73,8 @@ public class GameSceneController : MonoBehaviour
     void Start()
     {
         Screen.orientation = ScreenOrientation.Landscape;
+
+        StartCoroutine(UpdateTime());
 
         //Load Saved Settings (only sound volume for now)
         AudioListener.volume = PlayerPrefs.GetFloat("soundVolume", 1);
@@ -106,6 +110,10 @@ public class GameSceneController : MonoBehaviour
         }
 
         #region Camera and Labels Movement
+        float minPosX = -3.3f;
+        float minPosY = -2.6f;
+        float maxPosX = 5.7f;
+        float maxPosY = 1.66f;
 
         //Camera Movements(Move camera and labels(country, province))
         if (!menuIsOpen)
@@ -127,17 +135,42 @@ public class GameSceneController : MonoBehaviour
                 clickOrigin = Vector3.zero;
                 return;
             }
-
+            
             Vector3 newPositionVector = new Vector3(basePos.x + ((clickOrigin.x - dragOrigin.x) * (3.57f / Screen.width)), basePos.y + ((clickOrigin.y - dragOrigin.y) * (3.57f / Screen.width)), -10);
             Vector2 newProvinceLabelGroupPositionVector = new Vector2(provinceLabelsGroupTransformPos.x - (clickOrigin.x - dragOrigin.x), provinceLabelsGroupTransformPos.y - (clickOrigin.y - dragOrigin.y));
             Vector2 newcountryLabelGroupPositionVector = new Vector2(countryLabelsGroupTransformPos.x - (clickOrigin.x - dragOrigin.x), countryLabelsGroupTransformPos.y - (clickOrigin.y - dragOrigin.y));
+            
+            //Keep them inside of limits
+            if(newPositionVector.x > maxPosX || newPositionVector.x < minPosX)
+            {
+                newPositionVector.x = mainCamera.transform.position.x;
+                newProvinceLabelGroupPositionVector.x = provinceLabelsGroupTransform.position.x;
+                newcountryLabelGroupPositionVector.x = countryLabelsGroupTransform.position.x;
+            }
+            if(newPositionVector.y > maxPosY || newPositionVector.y < minPosY)
+            {
+                newPositionVector.y = mainCamera.transform.position.y;
+                newProvinceLabelGroupPositionVector.y = provinceLabelsGroupTransform.position.y;
+                newcountryLabelGroupPositionVector.y = countryLabelsGroupTransform.position.y;
+            }
 
+            //Assign new positions
             mainCamera.transform.position = newPositionVector;
             provinceLabelsGroupTransform.position = newProvinceLabelGroupPositionVector;
             countryLabelsGroupTransform.position = newcountryLabelGroupPositionVector;
         }
         #endregion
         
+    }
+
+    public IEnumerator UpdateTime()
+    {
+        while (true)
+        {
+            DateTime dateTime = DateTime.Now;
+            dateTimeTextObj.GetComponent<Text>().text = dateTime.Date.ToLongDateString() + " - " + dateTime.ToShortTimeString();
+            yield return new WaitForSeconds(10);
+        }
     }
 
     public void ChangeSoundVolume(float soundVolume)
@@ -295,8 +328,11 @@ public class GameSceneController : MonoBehaviour
         foreach (var countryX in provinces.GroupBy(x => x.countryID))
         {
             //Assign my country info to UI
-            myCountyName.GetComponent<Text>().text = countries[countryX.Key].name;
-            myMoneyAmount.GetComponent<Text>().text = countries[countryX.Key].remaining.ToString();
+            if (countries[countryX.Key].isMyCountry)
+            {
+                myCountryName.GetComponent<Text>().text = countries[countryX.Key].name;
+                myMoneyAmount.GetComponent<Text>().text = countries[countryX.Key].remaining.ToString();
+            }
 
             //Find centroid of provinces and assign country name to that position
             Vector2 countryCentroid = Vector2.zero;
