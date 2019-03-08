@@ -21,6 +21,8 @@ public class Login : MonoBehaviour {
     private APIConnector apiConnector;
 
     void Start () {
+        Screen.orientation = ScreenOrientation.Portrait;
+        
         //Make Connectivity Check
         apiConnector = new APIConnector(this);
         string jsonToSend = @"{'email':'" + "null" + "', 'password':'" + "null" + "'}";
@@ -38,7 +40,7 @@ public class Login : MonoBehaviour {
         }
 
     }
-
+    
     public void Pass2RegisterPage()
     {
         SceneManager.LoadSceneAsync("Register");
