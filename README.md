@@ -39,11 +39,18 @@
 + Put limitations about moving map
 + Add user registration page
 
+08.03.2019
++ Change Orientation when logout
++ Add splash screen
++ Get Info to Military Menu
++ Get Info to Diplomacy Menu
++ Get Info to Law Menu
++ Get Info to Budget Menu
++ UI Collision bug fix
+
 
 ## WHAT'S NEXT TO ADD ##
 
-- Change Orientation when logout
-- Add splash screen
 - Add icon-images to main scene UIs
 - Complete Military Menu
 - Complete Diplomacy Menu
