@@ -10,9 +10,26 @@
 ## SOME SS FROM GAME : ##
 
 <p>
-  <img src="https://github.com/aliihsank/SuperPower/blob/master/images/superpowerss1.png" width="250" title="Map Design">
-  <img src="https://github.com/aliihsank/SuperPower/blob/master/images/superpowerss2.png" width="250" title="In Game - Map">
+  <img src="https://github.com/aliihsank/SuperPower/blob/master/images/loginpage.png" width="250" title="Login" style="border-color: coral;">
+  <img src="https://github.com/aliihsank/SuperPower/blob/master/images/registerpage.png" width="250" title="Register">
 </p>
+<p>
+  <img src="https://github.com/aliihsank/SuperPower/blob/master/images/countrymap.png" width="430" title="Country Map">
+  <img src="https://github.com/aliihsank/SuperPower/blob/master/images/provincesmap.png" width="430" title="Provinces Map">
+</p>
+<p>
+  <img src="https://github.com/aliihsank/SuperPower/blob/master/images/militarymenu.png" width="430" title="Military Menu">
+  <img src="https://github.com/aliihsank/SuperPower/blob/master/images/diplomacymenu.png" width="430" title="Diplomacy Menu">
+  <img src="https://github.com/aliihsank/SuperPower/blob/master/images/lawsmenu.png" width="430" title="Laws Menu">
+  <img src="https://github.com/aliihsank/SuperPower/blob/master/images/budgetmenu.png" width="430" title="Budget Menu">
+</p>
+<p>
+  <img src="https://github.com/aliihsank/SuperPower/blob/master/images/givemission.png" width="430" title="Give Mission">
+  <img src="https://github.com/aliihsank/SuperPower/blob/master/images/newaggrement.png" width="430" title="New Aggrement">
+  <img src="https://github.com/aliihsank/SuperPower/blob/master/images/makelaw.png" width="430" title="Make Law">
+  <img src="https://github.com/aliihsank/SuperPower/blob/master/images/setbudget.png" width="430" title="Set Budget">
+</p>
+
 
 
 
@@ -48,13 +65,17 @@
 + Get Info to Budget Menu
 + UI Collision bug fix
 
+10.03.2019
++ Add icon-images to main scene UIs
++ Complete Military Menu
++ Complete Diplomacy Menu
++ Complete Law Menu
++ Complete Budget Menu
++ Add GiveMission Menu
++ Add NewAggrement Menu
++ Add MakeLaw Menu
++ Add SetBudget Menu
 
 ## WHAT'S NEXT TO ADD ##
-
-- Add icon-images to main scene UIs
-- Complete Military Menu
-- Complete Diplomacy Menu
-- Complete Law Menu
-- Complete Budget Menu
-
+- Show Army Corps Movement in Map
 - Add other details later...
