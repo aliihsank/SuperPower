@@ -78,4 +78,12 @@
 
 ## WHAT'S NEXT TO ADD ##
 - Show Army Corps Movement in Map
+- Make a way for users to create new army-armycorps
+- Give background image to empty UI elements
+- Publish Early Alpha Version with tons of bugs !
+- Fine-tune the value controls, add more data checks
+- Add Adv. watch option to earn more money
+- Publish Alpha Version without bugs !
+- Fix any bug that is known by the time
+- Publish Beta Version !
 - Add other details later...
