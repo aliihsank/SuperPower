@@ -127,18 +127,15 @@ public class UserOptionChange : MonoBehaviour
         targetCountry.ClearOptions();
         endDate.ClearOptions();
 
-        //Make request to fill table
-        string jsonToSend = @"{'email':'" + InterchangableVars.email + "', 'password':'" + InterchangableVars.password + "'}";
-
         //Add Aggrements
-        mission.GetComponent<Dropdown>().options.Add(new Dropdown.OptionData("Declare War"));
-        mission.GetComponent<Dropdown>().options.Add(new Dropdown.OptionData("Cease-fire Aggrement"));
-        mission.GetComponent<Dropdown>().options.Add(new Dropdown.OptionData("Peace Aggrement"));
-        mission.GetComponent<Dropdown>().options.Add(new Dropdown.OptionData("Tax Payment Aggrement"));
-        mission.GetComponent<Dropdown>().options.Add(new Dropdown.OptionData("Open Borders For Army"));
-        mission.GetComponent<Dropdown>().options.Add(new Dropdown.OptionData("Weapon Aggrement"));
-        mission.GetComponent<Dropdown>().options.Add(new Dropdown.OptionData("Medic Tool Aggrement"));
-        mission.captionText.text = "Select Aggrement";
+        aggrement.GetComponent<Dropdown>().options.Add(new Dropdown.OptionData("Declare War"));
+        aggrement.GetComponent<Dropdown>().options.Add(new Dropdown.OptionData("Cease-fire Aggrement"));
+        aggrement.GetComponent<Dropdown>().options.Add(new Dropdown.OptionData("Peace Aggrement"));
+        aggrement.GetComponent<Dropdown>().options.Add(new Dropdown.OptionData("Tax Payment Aggrement"));
+        aggrement.GetComponent<Dropdown>().options.Add(new Dropdown.OptionData("Open Borders For Army"));
+        aggrement.GetComponent<Dropdown>().options.Add(new Dropdown.OptionData("Weapon Aggrement"));
+        aggrement.GetComponent<Dropdown>().options.Add(new Dropdown.OptionData("Medic Tool Aggrement"));
+        aggrement.captionText.text = "Select Aggrement";
 
         //Add Target Country
         foreach(Country country in InterchangableVars.countries.Values)
@@ -166,10 +163,7 @@ public class UserOptionChange : MonoBehaviour
         //Remove all child objects from related dropdown
         lawTitle.ClearOptions();
         startDate.ClearOptions();
-
-        //Make request to fill table
-        string jsonToSend = @"{'email':'" + InterchangableVars.email + "', 'password':'" + InterchangableVars.password + "'}";
-
+        
         //Add Laws
         lawTitle.GetComponent<Dropdown>().options.Add(new Dropdown.OptionData("Medeni Kanun"));
         lawTitle.GetComponent<Dropdown>().options.Add(new Dropdown.OptionData("Tevhid-i Tedrisat"));
@@ -191,10 +185,7 @@ public class UserOptionChange : MonoBehaviour
         //Remove all child objects from related dropdown
         province.ClearOptions();
         budget.ClearOptions();
-
-        //Make request to fill table
-        string jsonToSend = @"{'email':'" + InterchangableVars.email + "', 'password':'" + InterchangableVars.password + "'}";
-
+        
         //Add Provinces
         foreach(Province provinceX in InterchangableVars.provinces)
         {
@@ -271,28 +262,73 @@ public class UserOptionChange : MonoBehaviour
 
     #region User Option Appliers
 
-    private void ApplySetBudget()
+    private void ApplyGiveMission()
     {
-        //TODO: Fill this method
-        throw new NotImplementedException();
+        string jsonToSend = @"{'email':'" + InterchangableVars.email + "', 'password':'" + InterchangableVars.password + "', 'corpType':'" + armCorp.captionText.text + "', 'provinceName':'" + targetProvince.captionText.text + "', 'mission':'" + mission.captionText.text + "'}";
+        
+        apiConnector.makeRequest(ApplyCheck, "giveMissionToCorps", jsonToSend);
+    }
+    
+    private void ApplyNewAggrement()
+    {
+        string jsonToSend = @"{'email':'" + InterchangableVars.email + "', 'password':'" + InterchangableVars.password + "', 'c1Name':'" + InterchangableVars.myCountryName + "', 'c2Name':'" + targetCountry.captionText.text + "', 'aggrementName':'" + aggrement.captionText.text + "', 'endDate':'" + endDate.captionText.text + "'}";
+
+        apiConnector.makeRequest(ApplyCheck, "offerAggrement", jsonToSend);
     }
 
     private void ApplyMakeLaw()
     {
-        //TODO: Fill this method
-        throw new NotImplementedException();
+        string jsonToSend = @"{'email':'" + InterchangableVars.email + "', 'password':'" + InterchangableVars.password + "', 'cName':'" + InterchangableVars.myCountryName + "', 'lawTitle':'" + lawTitle.captionText.text + "', 'startDate':'" + startDate.captionText.text + "'}";
+
+        apiConnector.makeRequest(ApplyCheck, "makeLaw", jsonToSend);
     }
 
-    private void ApplyNewAggrement()
+    private void ApplySetBudget()
     {
-        //TODO: Fill this method
-        throw new NotImplementedException();
+        string jsonToSend = @"{'email':'" + InterchangableVars.email + "', 'password':'" + InterchangableVars.password + "', 'provinceName':'" + province.captionText.text + "', 'year':'" + DateTime.Now.Year.ToString() + "', 'amount':'" + budget.captionText.text + "'}";
+
+        apiConnector.makeRequest(ApplyCheck, "setBudgetForProvince", jsonToSend);
     }
 
-    private void ApplyGiveMission()
+    private void ApplyCheck(string request, JSONNode result)
     {
-        //TODO: Fill this method
-        throw new NotImplementedException();
+        if (result["info"] == 1)
+        {
+            JSONNode details = result["details"];
+
+            //1 Result
+            if (details.IsObject)
+            {
+                if (details["Result"] == 1)
+                {
+                    Debug.Log("Assignment is done");
+                }
+                else
+                {
+                    Debug.Log("Query didn't work!");
+                }
+            }
+            //Multiple Results
+            else
+            {
+                foreach (JSONNode unit in details)
+                {
+                    if (unit["Result"] == 1)
+                    {
+                        Debug.Log("Mission is assigned");
+                    }
+                    else
+                    {
+                        Debug.Log("Query didn't work!");
+                    }
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("Request is unsuccesful!");
+            Debug.Log(result["details"].ToString());
+        }
     }
 
     #endregion

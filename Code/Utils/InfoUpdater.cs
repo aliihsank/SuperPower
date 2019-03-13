@@ -1,4 +1,5 @@
 ﻿using SimpleJSON;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,9 +13,9 @@ public class InfoUpdater : MonoBehaviour
     void Start()
     {
         apiConnector = new APIConnector(this);
-        
+
     }
-    
+
     void Update()
     {
         if (!updateStarted && InterchangableVars.email != "" && InterchangableVars.password != "")
@@ -27,7 +28,7 @@ public class InfoUpdater : MonoBehaviour
     public IEnumerator StartUpdateInfos()
     {
         string jsonToSend = @"{'email':'" + InterchangableVars.email + "', 'password':'" + InterchangableVars.password + "'}";
-        
+
         while (true)
         {
             if (InterchangableVars.updateStatus == "finished")
@@ -38,12 +39,14 @@ public class InfoUpdater : MonoBehaviour
                 //Reset existing lists
                 InterchangableVars.countries = new Dictionary<int, Country>();
                 InterchangableVars.provinces = new List<Province>();
+                InterchangableVars.armyCorpMissions = new List<ArmyCorpMission>();
 
                 //Get New Values and Set them to lists
                 apiConnector.makeRequest(AddCountries, "myCountryDetails", jsonToSend);
                 apiConnector.makeRequest(AddCountries, "otherCountriesDetails", jsonToSend);
                 apiConnector.makeRequest(AddProvinces, "myProvincesDetails", jsonToSend);
                 apiConnector.makeRequest(AddProvinces, "otherProvincesDetails", jsonToSend);
+                apiConnector.makeRequest(AddArmyCorpMissions, "armyCorpMissionDetails", jsonToSend);
             }
             yield return new WaitForSeconds(60);
         }
@@ -108,4 +111,32 @@ public class InfoUpdater : MonoBehaviour
         }
     }
 
+    public void AddArmyCorpMissions(string request, JSONNode result)
+    {
+        if (result["info"] == 1)
+        {
+            JSONNode details = result["details"];
+
+            //Only 1 province
+            if (details.IsObject)
+            {
+                Debug.Log("AddCorpMission: " + details.ToString());
+                InterchangableVars.armyCorpMissions.Add(new ArmyCorpMission(details["corpType"], details["numOfSoldiers"], details["provinceID"], details["provinceId"], details["mission"], new DateTime(details["startTime"]), details["duration"]));
+            }
+            //List of Provinces
+            else
+            {
+                foreach (JSONNode corpMission in details)
+                {
+                    Debug.Log("AddCorpMission: " + corpMission.ToString());
+                    InterchangableVars.armyCorpMissions.Add(new ArmyCorpMission(details["corpType"], details["numOfSoldiers"], details["provinceID"], details["provinceId"], details["mission"], new DateTime(details["startTime"]), details["duration"]));
+                }
+            }
+            InterchangableVars.armyCorpMissionDetailsRdy = true;
+        }
+        else
+        {
+            Debug.Log("Request is unsuccesful!");
+        }
+    }
 }

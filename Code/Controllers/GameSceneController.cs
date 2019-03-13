@@ -25,6 +25,7 @@ public class GameSceneController : MonoBehaviour
 
     public RectTransform provinceLabelsGroupTransform;
     public RectTransform countryLabelsGroupTransform;
+    public RectTransform armyCorpMissionsGroup;
 
     #region Camera Movements and Zoom-in,out Variables
     //Drag Camera
@@ -48,7 +49,7 @@ public class GameSceneController : MonoBehaviour
         InterchangableVars.screenWidth = Screen.width;
         InterchangableVars.screenHeight = Screen.height;
         
-        GetUserSessionData();
+        Utility.GetUserSessionData();
         
         provinceObjects = new List<GameObject>(GameObject.FindGameObjectsWithTag("Province"));
         #endregion
@@ -57,13 +58,14 @@ public class GameSceneController : MonoBehaviour
     
     void Update()
     {
-        if (InterchangableVars.myCountryRdy && InterchangableVars.otherCountriesRdy && (InterchangableVars.provincesRequestCounter == 2))
+        if (InterchangableVars.myCountryRdy && InterchangableVars.otherCountriesRdy && (InterchangableVars.provincesRequestCounter == 2) && InterchangableVars.armyCorpMissionDetailsRdy)
         {
             LoadInfos2UI();
 
             InterchangableVars.myCountryRdy = false;
             InterchangableVars.otherCountriesRdy = false;
             InterchangableVars.provincesRequestCounter = 0;
+            InterchangableVars.armyCorpMissionDetailsRdy = false;
         }
 
         #region Camera and Labels Movement
@@ -158,11 +160,11 @@ public class GameSceneController : MonoBehaviour
                     Vector2 ViewportPosition = mainCamera.WorldToViewportPoint(provinceObj.transform.GetComponent<Renderer>().bounds.center);
                     if(InterchangableVars.screenWidth > InterchangableVars.screenHeight)
                     {
-                        CreateLabel(InterchangableVars.screenWidth * ViewportPosition.x - InterchangableVars.screenWidth / 2, InterchangableVars.screenHeight * ViewportPosition.y - InterchangableVars.screenHeight / 2, provinceInfo.name.ToUpper() + "\n" + "P: " + provinceInfo.population + "\t" + "T: %" + provinceInfo.taxRate, 14, new Color(newMaterial.color.r + .5f, newMaterial.color.g + .5f, newMaterial.color.b + .5f, 1), provinceLabelsGroupTransform);
+                        Utility.CreateLabel(InterchangableVars.screenWidth * ViewportPosition.x - InterchangableVars.screenWidth / 2, InterchangableVars.screenHeight * ViewportPosition.y - InterchangableVars.screenHeight / 2, provinceInfo.name.ToUpper() + "\n" + "P: " + provinceInfo.population + "\t" + "T: %" + provinceInfo.taxRate, 14, new Color(newMaterial.color.r + .5f, newMaterial.color.g + .5f, newMaterial.color.b + .5f, 1), provinceLabelsGroupTransform);
                     }
                     else
                     {
-                        CreateLabel(InterchangableVars.screenHeight * ViewportPosition.x - InterchangableVars.screenHeight / 2, InterchangableVars.screenWidth * ViewportPosition.y - InterchangableVars.screenWidth / 2, provinceInfo.name.ToUpper() + "\n" + "P: " + provinceInfo.population + "\t" + "T: %" + provinceInfo.taxRate, 14, new Color(newMaterial.color.r + .5f, newMaterial.color.g + .5f, newMaterial.color.b + .5f, 1), provinceLabelsGroupTransform);
+                        Utility.CreateLabel(InterchangableVars.screenHeight * ViewportPosition.x - InterchangableVars.screenHeight / 2, InterchangableVars.screenWidth * ViewportPosition.y - InterchangableVars.screenWidth / 2, provinceInfo.name.ToUpper() + "\n" + "P: " + provinceInfo.population + "\t" + "T: %" + provinceInfo.taxRate, 14, new Color(newMaterial.color.r + .5f, newMaterial.color.g + .5f, newMaterial.color.b + .5f, 1), provinceLabelsGroupTransform);
                     }
                 }
             }
@@ -176,6 +178,8 @@ public class GameSceneController : MonoBehaviour
             {
                 myCountryName.GetComponent<Text>().text = InterchangableVars.countries[countryX.Key].name;
                 myMoneyAmount.GetComponent<Text>().text = InterchangableVars.countries[countryX.Key].remaining.ToString();
+
+                InterchangableVars.myCountryName = InterchangableVars.countries[countryX.Key].name;
             }
 
             //Find centroid of provinces and assign country name to that position
@@ -191,26 +195,24 @@ public class GameSceneController : MonoBehaviour
 
             if (InterchangableVars.screenWidth > InterchangableVars.screenHeight)
             {
-                CreateLabel(InterchangableVars.screenWidth * countryCentroid.x - InterchangableVars.screenWidth / 2, InterchangableVars.screenHeight * countryCentroid.y - InterchangableVars.screenHeight / 2, InterchangableVars.countries[countryX.Key].name.ToUpper() + "\n" + "P: " + InterchangableVars.countries[countryX.Key].totalPopulation + "\t" + "N: " + InterchangableVars.countries[countryX.Key].numOfProvinces, 20, Color.black, countryLabelsGroupTransform);
+                Utility.CreateLabel(InterchangableVars.screenWidth * countryCentroid.x - InterchangableVars.screenWidth / 2, InterchangableVars.screenHeight * countryCentroid.y - InterchangableVars.screenHeight / 2, InterchangableVars.countries[countryX.Key].name.ToUpper() + "\n" + "P: " + InterchangableVars.countries[countryX.Key].totalPopulation + "\t" + "N: " + InterchangableVars.countries[countryX.Key].numOfProvinces, 20, Color.black, countryLabelsGroupTransform);
             }
             else
             {
-                CreateLabel(InterchangableVars.screenHeight * countryCentroid.x - InterchangableVars.screenHeight / 2, InterchangableVars.screenWidth * countryCentroid.y - InterchangableVars.screenWidth / 2, InterchangableVars.countries[countryX.Key].name.ToUpper() + "\n" + "P: " + InterchangableVars.countries[countryX.Key].totalPopulation + "\t" + "N: " + InterchangableVars.countries[countryX.Key].numOfProvinces, 20, Color.black, countryLabelsGroupTransform);
+                Utility.CreateLabel(InterchangableVars.screenHeight * countryCentroid.x - InterchangableVars.screenHeight / 2, InterchangableVars.screenWidth * countryCentroid.y - InterchangableVars.screenWidth / 2, InterchangableVars.countries[countryX.Key].name.ToUpper() + "\n" + "P: " + InterchangableVars.countries[countryX.Key].totalPopulation + "\t" + "N: " + InterchangableVars.countries[countryX.Key].numOfProvinces, 20, Color.black, countryLabelsGroupTransform);
             }
         }
-
+        
+        foreach(ArmyCorpMission armyCorpMission in InterchangableVars.armyCorpMissions)
+        {
+            Utility.CreateImage(armyCorpMission, armyCorpMissionsGroup);
+        }
 
         SetLoadingPage(1);
 
         InterchangableVars.updateStatus = "finished";
     }
-
-
-    /*
-     * LOW LEVEL METHODS BELOW !!
-     * 
-     */
-
+    
     private void SetLoadingPage(int status)
     {
         //status = 0 (not ready), 1 (ready)
@@ -231,59 +233,6 @@ public class GameSceneController : MonoBehaviour
             dateTimePanel.SetActive(true);
             mapChoosePanel.SetActive(true);
             userOptionsPanel.SetActive(true);
-        }
-    }
-
-    private GameObject CreateLabel(float x, float y, string text_to_print, int font_size, Color text_color, Transform parent)
-    {
-        GameObject UItextGO = new GameObject(text_to_print);
-        
-        UItextGO.transform.SetParent(parent);
-
-        RectTransform trans = UItextGO.AddComponent<RectTransform>();
-        trans.anchoredPosition = new Vector2(x, y);
-
-        Text text = UItextGO.AddComponent<Text>();
-        text.text = text_to_print;
-        text.font = Font.CreateDynamicFontFromOSFont("Arial", font_size);
-        text.fontSize = font_size;
-        text.color = text_color;
-        text.alignment = TextAnchor.MiddleCenter;
-
-        ContentSizeFitter fitter = UItextGO.AddComponent<ContentSizeFitter>();
-        fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-        fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-        
-        return UItextGO;
-    }
-
-    private void GetUserSessionData()
-    {
-        string dataAsJson = PlayerPrefs.GetString("userInfo", "null");
-        if (dataAsJson == "null")
-        {
-            Debug.Log("No user session found!");
-        }
-        else
-        {
-            JSONNode userInfo = JSON.Parse(dataAsJson.Replace("'", "\""));
-            try
-            {
-                if (userInfo != null && !userInfo["email"].IsNull && !userInfo["password"].IsNull)
-                {
-                    InterchangableVars.email = userInfo["email"];
-                    InterchangableVars.password = userInfo["password"];
-                }
-                else
-                {
-                    Debug.LogError("Something wrong with json string!");
-                }
-            }
-            catch (Exception ee)
-            {
-                Debug.LogError("Error: User info was saved in wrong format!");
-                Debug.LogError(ee.StackTrace);
-            }
         }
     }
 
